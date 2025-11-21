@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card-glass p-3 mb-4">
+    <form method="post" enctype="multipart/form-data" class="row g-2 align-items-center">
+      <div class="col-sm-6">
+        <label class="form-label small-muted">Upload CSV</label>
+        <input class="form-control" type="file" name="csv_file" accept=".csv">
+      </div>
+      <div class="col-auto align-self-end">
+        <button class="btn btn-primary" type="submit">Upload & Analyze</button>
+      </div>
+      <div class="col-auto align-self-end">
+        <a class="btn btn-outline-light" href="{{ url_for('static', filename='students_sample.csv') }}" download>Download sample CSV</a>
+      </div>
+    </form>
+  </div>
+
+  {% if students %}
+    <div class="row mb-3">
+      <div class="col-lg-4 mb-3">
+        <div class="card-glass p-3 student-card">
+          <h5 class="mb-2">Class Summary</h5>
+          <p class="small-muted mb-1">Average SGPA: <strong>{{ class_summary.avg_sgpa }}</strong></p>
+          <p class="small-muted mb-1">Highest: <strong>{{ class_summary.max_sgpa }}</strong> | Lowest: <strong>{{ class_summary.min_sgpa }}</strong></p>
+        </div>
+      </div>
+      <div class="col-lg-8 mb-3">
+        <div id="sgpa_chart" class="chart fade-in"></div>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6 mb-3"><div id="grade_chart" class="chart fade-in card-glass p-2"></div></div>
+      <div class="col-md-6 mb-3"><div id="att_vs_sgpa" class="chart fade-in card-glass p-2"></div></div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-12"><div id="heatmap" class="chart fade-in card-glass p-2"></div></div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-12"><div id="stacked" class="chart fade-in card-glass p-2"></div></div>
+    </div>
+
+    <hr style="border-color: rgba(255,255,255,0.04)">
+
+    <h4 class="mb-2">Per-student attendance</h4>
+    <div class="row cards mb-4">
+      {% for pair in figs.per_student_att %}
+        <div class="card-glass student-card p-3">
+          <h6>{{ pair[0] }}</h6>
+          <div id="att_{{ loop.index0 }}" class="chart" style="height:220px;"></div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <h4 class="mb-2">Students Summary</h4>
+    <div class="row cards mb-4">
+      {% for name, info in students.items() %}
+        <div class="card-glass student-card p-3">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h5 style="margin:0">{{ name }}</h5>
+              <p class="small-muted mb-1">Total: {{ info['total'] }} &nbsp; • &nbsp; Absents: {{ info['absents'] }}</p>
+              <p class="small-muted" style="font-size:.92rem;">{{ info['suggestion'] }}</p>
+            </div>
+            <div class="text-end">
+              <div class="badge-grade">{{ info['grade'] }}</div>
+              <div class="small-muted" style="margin-top:.45rem">{{ info['sgpa'] }} SGPA</div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <script>
+      // safe JS object using tojson
+      const figs = {{ figs | tojson }};
+
+      // Main charts
+      Plotly.newPlot('sgpa_chart', figs.sgpa.data, figs.sgpa.layout || {});
+      Plotly.newPlot('grade_chart', figs.grade.data, figs.grade.layout || {});
+      Plotly.newPlot('att_vs_sgpa', figs.att_vs_sgpa.data, figs.att_vs_sgpa.layout || {});
+      Plotly.newPlot('heatmap', figs.heatmap.data, figs.heatmap.layout || {});
+      Plotly.newPlot('stacked', figs.stacked.data, figs.stacked.layout || {});
+
+      // per-student plots
+      for (let i = 0; i < figs.per_student_att.length; i++) {
+        const pair = figs.per_student_att[i];
+        const divId = 'att_' + i;
+        const figDict = pair[1];
+        Plotly.newPlot(divId, figDict.data, figDict.layout || {});
+      }
+    </script>
+  {% endif %}
+{% endblock %}

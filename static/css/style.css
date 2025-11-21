@@ -1,0 +1,141 @@
+/* static/css/style.css */
+/* Google Fonts loaded from template; keep names in sync */
+:root{
+  --accent:#6c5ce7;
+  --accent-2:#00b894;
+  --muted: #6b7280;
+  --glass-bg: rgba(255,255,255,0.06);
+  --glass-border: rgba(255,255,255,0.08);
+  --card-bg: rgba(255,255,255,0.04);
+}
+
+/* Full page background */
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: "Inter", "Poppins", sans-serif;
+  color: #ffffff;
+
+  /* Blur background using ::before */
+  position: relative;
+}
+
+/* Blurred background layer */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url("/static/images/bg.jpg") center/cover no-repeat;
+  filter: blur(3px) brightness(0.75);
+  transform: scale(1.03);
+  z-index: -2;
+}
+
+
+/* Optional subtle dark overlay (makes text more readable) */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);  /* transparent dark overlay */
+  z-index: -1;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1.25rem;
+}
+
+/* Header */
+header h1 {
+  font-size: 1.6rem;
+  letter-spacing: -0.4px;
+  margin: 0;
+}
+header p { color: rgba(255,255,255,0.75); margin-top: 0.25rem; }
+
+/* Glass card */
+.card-glass {
+  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  border-radius: 14px;
+  box-shadow: 0 6px 30px rgba(2,6,23,0.6);
+  color: #fff;
+}
+
+/* Upload form */
+.card-glass .form-control, .card-glass .btn {
+  border-radius: 10px;
+}
+
+/* Cards grid */
+.row.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+/* student card */
+.student-card {
+  padding: 1rem;
+  border-radius: 12px;
+  transition: transform .18s ease, box-shadow .18s ease;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.student-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 40px rgba(2,6,23,0.6);
+}
+
+/* badges */
+.badge-grade {
+  background: linear-gradient(90deg, var(--accent), #4c8cff);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 0.25rem 0.45rem;
+  font-size: 0.85rem;
+}
+
+/* charts container styling */
+/* Chart container should be transparent and allow plot to fill */
+.chart {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 10px;
+  margin-top: 20px;
+  width: 100%;
+  height: 420px !important;   /* << THE MOST IMPORTANT LINE */
+  min-height: 420px !important;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+#heatmap { height: 520px !important; min-height: 520px !important; }
+#sgpa_chart { height: 460px !important; min-height: 460px !important; }
+#stacked { height: 460px !important; min-height: 460px !important; }
+
+
+
+/* small meta */
+.small-muted { color: rgba(255,255,255,0.7); font-size: .92rem; }
+
+/* responsive tweaks */
+@media (max-width: 767px){
+  header h1 { font-size: 1.25rem; }
+  .container { padding: 0.75rem; }
+}
+
+/* subtle entrance animation for charts */
+.fade-in {
+  animation: fadeInUp .6s ease both;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
